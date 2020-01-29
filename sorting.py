@@ -5,7 +5,6 @@ test = False
 
 
 class Array:
-
     full_array = None
 
     def plot(self):
@@ -30,8 +29,12 @@ class Array:
     def swap(self, index1, index2):
         self.values[index2], self.values[index1] = self.values[index1], self.values[index2]
         Array.full_array[self.lower_index + index2], Array.full_array[self.lower_index +
-                                                                      index1] = Array.full_array[self.lower_index + index1], Array.full_array[self.lower_index + index2]
+                                                                      index1] = Array.full_array[
+                                                                                    self.lower_index + index1], \
+                                                                                Array.full_array[
+                                                                                    self.lower_index + index2]
         self.plot()
+        #self.update_plot()
 
     def set(self, index, num):
         self.values[index] = num
@@ -212,3 +215,54 @@ def quick_sort(nums):  # n^2
             _quick_sort(items, split_index + 1, high)
 
     _quick_sort(nums, 0, nums.get_len() - 1)
+
+
+def count_sort(nums):  # O(n^2) [it's actually O(4005)==O(1), as we know the input lies between -2000 to 2000]
+    # The output character array that will have sorted arr
+    output = nums  # [0 for i in range(nums.get_len())]
+
+    # Create a count array to store count of individual
+    # characters and initialize count array as 0
+    count = [0 for i in range(4005)]  # We know the numbers lie from -2000 to 2000, we are just mapping within 4000
+
+    # Store count of each number
+    for i in range(nums.get_len()):
+        count[nums.values[i] + 2000] += 1       # so the smallest value, i.e -2000 will be present at index 0
+
+    # position of this character in output array
+    k = 0
+    for i in range(4005):
+        for j in range(count[i]):
+            nums.set(k, i - 2000)
+            k = k + 1
+
+
+def shell_sort(nums):   # O(n^2) This is an enhanced version of the insertion sort
+    # Start with a big gap, then reduce the gap
+    n = nums.get_len()
+    gap = n / 2
+
+    # Do a gapped insertion sort for this gap size.
+    # The first gap elements a[0..gap-1] are already in gapped
+    # order keep adding one more element until the entire array
+    # is gap sorted
+    while gap > 0:
+
+        for i in range(gap, n):
+
+            # add a[i] to the elements that have been gap sorted
+            # save a[i] in temp and make a hole at position i
+            temp = nums.values[i]
+
+            # shift earlier gap-sorted elements up until the correct
+            # location for a[i] is found
+            j = i
+            while j >= gap and nums.values[j - gap] > temp:
+                nums.swap(j, j - gap)
+                # nums.values[j] =  nums.values[j-gap]
+                j -= gap
+
+            # put temp (the original a[i]) in its correct location
+            nums.set(j, temp)
+            # arr[j] = temp
+        gap /= 2
